@@ -1,11 +1,11 @@
-use std::collections::HashMap;
+use super::baseparser::BaseParser;
+use super::subparsers::*;
 use crate::extension::parsers::stuffdata::StuffData;
 use crate::protocol::hdirection::HDirection;
 use crate::protocol::hpacket::HPacket;
 use crate::protocol::vars::legacy::{LegacyDouble, LegacyId, LegacyLength, LegacyStringId};
 use crate::protocol::vars::packetvariable::PacketVariable;
-use super::baseparser::BaseParser;
-use super::subparsers::*;
+use std::collections::HashMap;
 
 // WIN63-202307020022-676506471
 
@@ -14,51 +14,51 @@ use super::subparsers::*;
 pub struct AuthenticationOK {
     pub account_id: LegacyId,
     pub suggested_login_actions: Vec<i16>,
-    pub identity_id: LegacyId
+    pub identity_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CompleteDiffieHandshake {
     pub encrypted_public_key: String,
-    pub server_client_encryption: Option<bool>
+    pub server_client_encryption: Option<bool>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct DisconnectReason {
-    pub reason: Option<i32>
+    pub reason: Option<i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GenericError {
-    pub error_code: i32
+    pub error_code: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct IdentityAccounts {
-    pub accounts: HashMap<i32, String>
+    pub accounts: HashMap<i32, String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct InitDiffieHandshake {
     pub encrypted_prime: String,
-    pub encrypted_generator: String
+    pub encrypted_generator: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct IsFirstLoginOfDay {
-    pub is_first_login_of_day: bool
+    pub is_first_login_of_day: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct NoobnessLevel {
-    pub level: i32
+    pub level: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -68,7 +68,7 @@ pub struct Ping {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UniqueMachineID {
-    pub machine_id: String
+    pub machine_id: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -87,7 +87,7 @@ pub struct UserObject {
     pub stream_publishing_allowed: bool,
     pub last_access_date: String,
     pub name_change_allowed: bool,
-    pub account_safety_locked: bool
+    pub account_safety_locked: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -95,44 +95,54 @@ pub struct UserObject {
 pub struct UserRights {
     pub club_level: i32,
     pub security_level: i32,
-    pub is_ambassador: bool
+    pub is_ambassador: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CraftableProducts {
     pub recipe_product_items: Vec<FurnitureProductItem>,
-    pub usable_inventory_furni_classes: Vec<String>
+    pub usable_inventory_furni_classes: Vec<String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CraftingRecipe {
-    pub ingredients: Vec<OutgoingIngredient>
+    pub ingredients: Vec<OutgoingIngredient>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CraftingRecipesAvailable {
     pub count: i32,
-    pub recipe_complete: bool
+    pub recipe_complete: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PartialEq)]
 #[to(direction = 0)]
 pub struct CraftingResult {
     pub success: bool,
-    pub product_data: FurnitureProductItem
+    pub product_data: FurnitureProductItem,
 }
 
 impl PacketVariable for CraftingResult {
-    fn from_packet(bytes: Vec<u8>) -> (Self, usize) where Self: Sized {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
         let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
         let success: bool = packet.read();
-        (CraftingResult {
-            success,
-            product_data: if success { packet.read() } else { Default::default() }
-        }, packet.read_index - 6)
+        (
+            CraftingResult {
+                success,
+                product_data: if success {
+                    packet.read()
+                } else {
+                    Default::default()
+                },
+            },
+            packet.read_index - 6,
+        )
     }
 
     fn to_packet(&self) -> Vec<u8> {
@@ -147,7 +157,7 @@ impl PacketVariable for CraftingResult {
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ForumData {
-    pub forum_data: ExtendedForumData
+    pub forum_data: ExtendedForumData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -156,7 +166,7 @@ pub struct ForumsList {
     pub list_code: i32,
     pub total_amount: i32,
     pub start_index: i32,
-    pub forums: Vec<BaseForumData>
+    pub forums: Vec<BaseForumData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -164,7 +174,7 @@ pub struct ForumsList {
 pub struct ForumThreads {
     pub group_id: LegacyId,
     pub start_index: i32,
-    pub threads: Vec<ThreadData>
+    pub threads: Vec<ThreadData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -172,14 +182,14 @@ pub struct ForumThreads {
 pub struct PostMessage {
     pub group_id: LegacyId,
     pub thread_id: LegacyId,
-    pub message: MessageData
+    pub message: MessageData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PostThread {
     pub group_id: LegacyId,
-    pub thread: ThreadData
+    pub thread: ThreadData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -188,13 +198,13 @@ pub struct ThreadMessages {
     pub group_id: LegacyId,
     pub thread_id: LegacyId,
     pub start_index: i32,
-    pub messages: Vec<MessageData>
+    pub messages: Vec<MessageData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UnreadForumsCount {
-    pub count: i32
+    pub count: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -202,20 +212,20 @@ pub struct UnreadForumsCount {
 pub struct UpdateMessage {
     pub group_id: LegacyId,
     pub thread_id: LegacyId,
-    pub message: MessageData
+    pub message: MessageData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UpdateThread {
     pub group_id: LegacyId,
-    pub thread: ThreadData
+    pub thread: ThreadData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PromoArticles {
-    pub articles: Vec<PromoArticleData>
+    pub articles: Vec<PromoArticleData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -225,7 +235,7 @@ pub struct CompetitionEntrySubmitResult {
     pub goal_code: String,
     pub result: i32,
     pub required_furnis: Vec<String>,
-    pub present_furnis: Vec<String>
+    pub present_furnis: Vec<String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -234,21 +244,21 @@ pub struct CompetitionVotingInfo {
     pub goal_id: LegacyId,
     pub goal_code: String,
     pub result_code: i32,
-    pub votes_remaining: i32
+    pub votes_remaining: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CurrentTimingCode {
     pub scheduling_str: String,
-    pub code: String
+    pub code: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct IsUserPartOfCompetition {
     pub is_part_of: bool,
-    pub target_id: LegacyId
+    pub target_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -259,7 +269,7 @@ pub struct NoOwnedRoomsAlert {}
 #[to(direction = 0)]
 pub struct SecondsUntil {
     pub time_str: String,
-    pub seconds_until: i32
+    pub seconds_until: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -267,27 +277,27 @@ pub struct SecondsUntil {
 pub struct PhoneCollectionState {
     pub phone_status_code: i32,
     pub collection_status_code: i32,
-    pub milliseconds_to_allow_process_reset: i32
+    pub milliseconds_to_allow_process_reset: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct TryPhoneNumberResult {
     pub result_code: i32,
-    pub millis_to_allow_process_reset: i32
+    pub millis_to_allow_process_reset: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct TryVerificationCodeResult {
     pub result_code: i32,
-    pub milliseconds_to_allow_process_reset: i32
+    pub milliseconds_to_allow_process_reset: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CallForHelpDisabledNotify {
-    pub info_url: String
+    pub info_url: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -297,20 +307,20 @@ pub struct CallForHelpPendingCallsDeleted {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CallForHelpPendingCalls {
-    pub calls: Vec<CallForHelpPendingCall>
+    pub calls: Vec<CallForHelpPendingCall>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CallForHelpReply {
-    pub message: String
+    pub message: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CallForHelpResult {
     pub result_type: i32,
-    pub message_text: String
+    pub message_text: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -320,7 +330,7 @@ pub struct ChatReviewSessionDetached {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ChatReviewSessionOfferedToGuide {
-    pub acceptance_timeout: i32
+    pub acceptance_timeout: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -328,20 +338,20 @@ pub struct ChatReviewSessionOfferedToGuide {
 pub struct ChatReviewSessionResults {
     pub winning_vote_code: i32,
     pub own_vote_code: i32,
-    pub final_status: Vec<i32>
+    pub final_status: Vec<i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ChatReviewSessionStarted {
     pub voting_timeout: i32,
-    pub chat_record: String
+    pub chat_record: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ChatReviewSessionVotingStatus {
-    pub status: Vec<i32>
+    pub status: Vec<i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -350,26 +360,36 @@ pub struct GuideOnDutyStatus {
     pub on_duty: bool,
     pub guides_on_duty: i32,
     pub helpers_on_duty: i32,
-    pub guardians_on_duty: i32
+    pub guardians_on_duty: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PartialEq)]
 #[to(direction = 0)]
 pub struct GuideReportingStatus {
     pub status_code: i32,
-    pub pending_ticket: Option<PendingGuideTicket>
+    pub pending_ticket: Option<PendingGuideTicket>,
 }
 
 impl PacketVariable for GuideReportingStatus {
-    fn from_packet(bytes: Vec<u8>) -> (Self, usize) where Self: Sized {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
         let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
 
         let status_code = packet.read();
 
-        (Self {
-            status_code,
-            pending_ticket: if status_code == 1 { packet.read() } else { None }
-        }, packet.read_index - 6)
+        (
+            Self {
+                status_code,
+                pending_ticket: if status_code == 1 {
+                    packet.read()
+                } else {
+                    None
+                },
+            },
+            packet.read_index - 6,
+        )
     }
 
     fn to_packet(&self) -> Vec<u8> {
@@ -389,7 +409,7 @@ pub struct GuideSessionAttached {
     pub as_guide: bool,
     pub help_request_type: i32,
     pub help_request_description: String,
-    pub role_specific_wait_time: i32
+    pub role_specific_wait_time: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -399,39 +419,39 @@ pub struct GuideSessionDetached {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuideSessionEnded {
-    pub end_reason: i32
+    pub end_reason: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuideSessionError {
-    pub error_code: i32
+    pub error_code: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuideSessionInvitedToGuideRoom {
     pub room_id: LegacyId,
-    pub room_name: String
+    pub room_name: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuideSessionMessage {
     pub chat_message: String,
-    pub sender_id: LegacyId
+    pub sender_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuideSessionPartnerIsTyping {
-    pub is_typing: bool
+    pub is_typing: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuideSessionRequesterRoom {
-    pub requester_room_id: LegacyId
+    pub requester_room_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -442,58 +462,58 @@ pub struct GuideSessionStarted {
     pub requester_figure: String,
     pub guide_user_id: LegacyId,
     pub guide_name: String,
-    pub guide_figure: String
+    pub guide_figure: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuideTicketCreationResult {
-    pub localization_code: i32
+    pub localization_code: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuideTicketResolution {
-    pub localization_code: i32
+    pub localization_code: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct IssueCloseNotification {
     pub close_reason: i32,
-    pub message_text: String
+    pub message_text: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct QuizData {
     pub quiz_code: String,
-    pub question_ids: Vec<i32>
+    pub question_ids: Vec<i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct QuizResults {
     pub quiz_code: String,
-    pub question_ids_for_wrong_answers: Vec<i32>
+    pub question_ids_for_wrong_answers: Vec<i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CfhChatlog {
-    pub data: CfhChatlogData
+    pub data: CfhChatlogData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct IssueDeleted {
-    pub issue_id: LegacyStringId
+    pub issue_id: LegacyStringId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct IssueInfo {
-    pub issue_data: IssueMessageData
+    pub issue_data: IssueMessageData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -501,40 +521,40 @@ pub struct IssueInfo {
 pub struct IssuePickFailed {
     pub issues: Vec<(LegacyId, LegacyId, String)>,
     pub retry_enabled: bool,
-    pub retry_count: i32
+    pub retry_count: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ModeratorActionResult {
     pub user_id: LegacyId,
-    pub success: bool
+    pub success: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ModeratorCaution {
     pub message: String,
-    pub url: String
+    pub url: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ModeratorInit {
-    pub data: ModeratorInitData
+    pub data: ModeratorInitData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Moderator {
     pub message: String,
-    pub url: String
+    pub url: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ModeratorRoomInfo {
-    pub data: RoomModerationData
+    pub data: RoomModerationData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -543,43 +563,43 @@ pub struct ModeratorToolPreferences {
     pub window_x: i32,
     pub window_y: i32,
     pub window_width: i32,
-    pub window_height: i32
+    pub window_height: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ModeratorUserInfo {
-    pub data: ModeratorUserInfoData
+    pub data: ModeratorUserInfoData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomChatlog {
-    pub data: ChatRecordData
+    pub data: ChatRecordData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomVisits {
-    pub data: RoomVisitsData
+    pub data: RoomVisitsData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UserBanned {
-    pub message: String
+    pub message: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UserChatlog {
-    pub data: UserChatlogData
+    pub data: UserChatlogData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FurniListAddOrUpdate {
-    pub furni: FurniData
+    pub furni: FurniData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -587,7 +607,7 @@ pub struct FurniListAddOrUpdate {
 pub struct FurniList {
     pub total_fragments: i32,
     pub fragment_no: i32,
-    pub furni_fragment: Vec<FurniData>
+    pub furni_fragment: Vec<FurniData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -597,14 +617,14 @@ pub struct FurniListInvalidate {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FurniListRemove {
-    pub strip_id: LegacyId
+    pub strip_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PostItPlaced {
     pub id: LegacyId,
-    pub items_left: i32
+    pub items_left: i32,
 }
 
 // TODO
@@ -613,19 +633,19 @@ pub struct PostItPlaced {
 #[to(direction = 0)]
 pub struct YouAreController {
     pub flat_id: LegacyId,
-    pub room_controller_level: i32
+    pub room_controller_level: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct YouAreNotController {
-    pub flat_id: LegacyId
+    pub flat_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct YouAreOwner {
-    pub flat_id: LegacyId
+    pub flat_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -636,14 +656,14 @@ pub struct CancelMysteryBoxWait {}
 #[to(direction = 0)]
 pub struct GotMysteryBoxPrize {
     pub content_type: String,
-    pub class_id: i32 // Might be a LegacyId
+    pub class_id: i32, // Might be a LegacyId
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct MysteryBoxKeys {
     pub box_color: String,
-    pub key_color: String
+    pub key_color: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -653,20 +673,20 @@ pub struct ShowMysteryBoxWait {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct AccountSafetyLockStatusChange {
-    pub status: i32
+    pub status: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ApproveName {
     pub result: i32,
-    pub name_validation_info: String
+    pub name_validation_info: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ChangeEmailResult {
-    pub result: i32
+    pub result: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -674,57 +694,57 @@ pub struct ChangeEmailResult {
 pub struct EmailStatusResult {
     pub email: String,
     pub is_verified: bool,
-    pub allow_change: bool
+    pub allow_change: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ExtendedProfileChanged {
-    pub user_id: LegacyId
+    pub user_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ExtendedProfile {
-    pub data: ExtendedProfileData
+    pub data: ExtendedProfileData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GroupDetailsChanged {
-    pub group_id: LegacyId
+    pub group_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GroupMembershipRequested {
     pub group_id: LegacyId,
-    pub requester: MemberData
+    pub requester: MemberData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuildCreated {
     pub base_room_id: LegacyId,
-    pub group_id: LegacyId
+    pub group_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuildCreationInfo {
-    pub data: GuildCreationData
+    pub data: GuildCreationData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuildEditFailed {
-    pub reason: i32
+    pub reason: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuildEditInfo {
-    pub data: GuildEditData
+    pub data: GuildEditData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -734,104 +754,104 @@ pub struct GuildEditorData {
     pub layer_parts: Vec<BadgePartData>,
     pub badge_colors: Vec<GuildColorData>,
     pub primary_colors: Vec<GuildColorData>,
-    pub secondary_colors: Vec<GuildColorData>
+    pub secondary_colors: Vec<GuildColorData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuildMemberFurniCountInHQ {
     pub user_id: LegacyId,
-    pub furni_count: i32
+    pub furni_count: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuildMemberMgmtFailed {
     pub guild_id: LegacyId,
-    pub reason: i32
+    pub reason: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuildMembershipRejected {
     pub guild_id: LegacyId,
-    pub user_id: LegacyId
+    pub user_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuildMemberships {
-    pub guilds: Vec<HabboGroupEntryData>
+    pub guilds: Vec<HabboGroupEntryData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuildMembershipUpdated {
     pub guild_id: LegacyId,
-    pub data: MemberData
+    pub data: MemberData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuildMembers {
-    pub data: Vec<GuildMemberData>
+    pub data: Vec<GuildMemberData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct HabboGroupBadges {
-    pub badges: HashMap<i32, String>
+    pub badges: HashMap<i32, String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct HabboGroupDeactivated {
-    pub group_id: LegacyId
+    pub group_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct HabboGroupDetails {
-    pub data: HabboGroupDetailsData
+    pub data: HabboGroupDetailsData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct HabboGroupJoinFailed {
-    pub reason: i32
+    pub reason: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct HabboUserBadges {
     pub user_id: LegacyId,
-    pub badges: HashMap<i32, String>
+    pub badges: HashMap<i32, String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct HandItemReceived {
     pub giver_user_id: LegacyId,
-    pub hand_item_type: i32
+    pub hand_item_type: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct IgnoredUsers {
-    pub ignored_users: Vec<String>
+    pub ignored_users: Vec<String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct IgnoreResult {
     pub result: i32,
-    pub name: String
+    pub name: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct InClientLink {
-    pub link: String
+    pub link: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -839,7 +859,7 @@ pub struct InClientLink {
 pub struct PetRespectNotification {
     pub respect: i32,
     pub pet_owner_id: LegacyId,
-    pub pet_data: PetData
+    pub pet_data: PetData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -847,27 +867,27 @@ pub struct PetRespectNotification {
 pub struct PetSupplementedNotification {
     pub pet_id: LegacyId,
     pub user_id: LegacyId,
-    pub supplement_type: i32
+    pub supplement_type: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RelationshipStatusInfo {
     pub user_id: LegacyId,
-    pub relationship_statuses: Vec<RelationshipStatusInfoData>
+    pub relationship_statuses: Vec<RelationshipStatusInfoData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RespectNotification {
     pub user_id: LegacyId,
-    pub respect_total: i32
+    pub respect_total: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ScrSendKickbackInfo {
-    pub data: ScrKickbackData
+    pub data: ScrKickbackData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -883,7 +903,7 @@ pub struct ScrSendUserInfo {
     pub past_club_days: bool,
     pub past_vip_days: bool,
     pub minutes_until_expiration: i32,
-    pub minutes_since_last_modified: Option<i32>
+    pub minutes_since_last_modified: Option<i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -891,7 +911,7 @@ pub struct ScrSendUserInfo {
 pub struct UserNameChanged {
     pub web_id: i32, // Might be a LegacyId
     pub id: LegacyId,
-    pub new_name: String
+    pub new_name: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -899,27 +919,34 @@ pub struct UserNameChanged {
 pub struct RoomEntryTile {
     pub x: i32,
     pub y: i32,
-    pub dir: i32
+    pub dir: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomOccupiedTiles {
-    pub occupied_tiles: Vec<(i32, i32)>
+    pub occupied_tiles: Vec<(i32, i32)>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PartialEq)]
 #[to(direction = 0)]
 pub struct CantConnect {
     pub reason: i32,
-    pub parameter: String
+    pub parameter: String,
 }
 
 impl PacketVariable for CantConnect {
-    fn from_packet(bytes: Vec<u8>) -> (Self, usize) where Self: Sized {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
         let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
         let reason = packet.read();
-        let parameter = if reason == 3 { packet.read() } else { String::from("") };
+        let parameter = if reason == 3 {
+            packet.read()
+        } else {
+            String::from("")
+        };
         (CantConnect { reason, parameter }, packet.read_index - 6)
     }
 
@@ -941,52 +968,52 @@ pub struct CloseConnection {}
 #[to(direction = 0)]
 pub struct FlatAccessible {
     pub flat_id: LegacyId,
-    pub user_name: String
+    pub user_name: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GamePlayerValue {
     pub user_id: LegacyId,
-    pub value: i32
+    pub value: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct OpenConnection {
-    pub flat_id: LegacyId
+    pub flat_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomForward {
-    pub room_id: LegacyId
+    pub room_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomQueueStatus {
     pub flat_id: LegacyId,
-    pub queue: RoomQueueSet
+    pub queue: RoomQueueSet,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomReady {
     pub room_type: String,
-    pub room_id: LegacyId
+    pub room_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct YouArePlayingGame {
-    pub is_playing: bool
+    pub is_playing: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct YouAreSpectator {
-    pub flat_id: LegacyId
+    pub flat_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -997,7 +1024,7 @@ pub struct CampaignCalendarData {
     pub current_day: i32,
     pub campaign_days: i32,
     pub opened_days: Vec<i32>,
-    pub missed_days: Vec<i32>
+    pub missed_days: Vec<i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1006,27 +1033,27 @@ pub struct CampaignCalendarDoorOpened {
     pub door_opened: bool,
     pub product_name: String,
     pub custom_image: String,
-    pub furniture_class_name: String
+    pub furniture_class_name: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Interstitial {
-    pub can_show_interstitial: bool
+    pub can_show_interstitial: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomAdError {
     pub error_code: i32,
-    pub filtered_text: String
+    pub filtered_text: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct AchievementResolutionCompleted {
     pub stuff_code: String,
-    pub badge_code: String
+    pub badge_code: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1037,7 +1064,7 @@ pub struct AchievementResolutionProgress {
     pub required_level_badge_code: String,
     pub user_progress: i32,
     pub total_progress: i32,
-    pub end_time: i32
+    pub end_time: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1045,7 +1072,7 @@ pub struct AchievementResolutionProgress {
 pub struct AchievementResolutions {
     pub stuff_id: LegacyId,
     pub achievements: Vec<AchievementResolutionData>,
-    pub end_time: i32
+    pub end_time: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1056,19 +1083,19 @@ pub struct Chat {
     pub gesture: i32,
     pub style_id: i32,
     pub links: Vec<(String, String, bool)>,
-    pub tracking_id: i32
+    pub tracking_id: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FloodControl {
-    pub seconds: i32
+    pub seconds: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RemainingMutePeriod {
-    pub seconds_remaining: i32
+    pub seconds_remaining: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1078,13 +1105,13 @@ pub struct RoomChatSettings {
     pub bubble_width: i32,
     pub scroll_speed: i32,
     pub full_hear_range: i32,
-    pub flood_sensitivity: i32
+    pub flood_sensitivity: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomFilterSettings {
-    pub bad_words: Vec<String>
+    pub bad_words: Vec<String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1095,14 +1122,14 @@ pub struct Shout {
     pub gesture: i32,
     pub style_id: i32,
     pub links: Vec<(String, String, bool)>,
-    pub tracking_id: i32
+    pub tracking_id: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UserTyping {
     pub user_index: i32,
-    pub state: i32
+    pub state: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1113,20 +1140,20 @@ pub struct Whisper {
     pub gesture: i32,
     pub style_id: i32,
     pub links: Vec<(String, String, bool)>,
-    pub tracking_id: i32
+    pub tracking_id: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CanCreateRoom {
     pub result_code: i32,
-    pub room_limit: i32
+    pub room_limit: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CategoriesWithVisitorCount {
-    pub data: CategoriesWithVisitorCountData
+    pub data: CategoriesWithVisitorCountData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1134,48 +1161,48 @@ pub struct CategoriesWithVisitorCount {
 pub struct CompetitionRoomsData {
     pub goal_id: i32,
     pub page_index: i32,
-    pub page_count: i32
+    pub page_count: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ConvertedRoomId {
     pub global_id: String,
-    pub converted_id: LegacyId
+    pub converted_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Doorbell {
-    pub user_name: String
+    pub user_name: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FavouriteChanged {
     pub flat_id: LegacyId,
-    pub added: bool
+    pub added: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Favourites {
     pub limit: i32,
-    pub favourite_room_ids: Vec<LegacyId>
+    pub favourite_room_ids: Vec<LegacyId>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FlatAccessDenied {
     pub flat_id: LegacyId,
-    pub user_name: Option<String>
+    pub user_name: Option<String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FlatCreated {
     pub flat_id: LegacyId,
-    pub flat_name: String
+    pub flat_name: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1189,20 +1216,20 @@ pub struct GetGuestRoomResult {
     pub all_in_room_muted: bool,
     pub room_moderation_settings: RoomModerationSettings,
     pub can_mute: bool,
-    pub chat_settings: RoomChatSettings
+    pub chat_settings: RoomChatSettings,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GuestRoomSearchResult {
-    pub data: GuestRoomSearchResultData
+    pub data: GuestRoomSearchResultData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct NavigatorSettings {
     pub home_room_id: LegacyId,
-    pub room_id_to_enter: LegacyId
+    pub room_id_to_enter: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PartialEq)]
@@ -1210,18 +1237,32 @@ pub struct NavigatorSettings {
 pub struct OfficialRooms {
     pub data: OfficialRoomsData,
     pub ad_room: Option<OfficialRoomEntryData>,
-    pub promoted_rooms: PromotedRoomsData
+    pub promoted_rooms: PromotedRoomsData,
 }
 
 impl PacketVariable for OfficialRooms {
-    fn from_packet(bytes: Vec<u8>) -> (Self, usize) where Self: Sized {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
         let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
 
         let data = packet.read();
-        let ad_room = if packet.read::<i32>() > 0 { packet.read() } else { None };
+        let ad_room = if packet.read::<i32>() > 0 {
+            packet.read()
+        } else {
+            None
+        };
         let promoted_rooms = packet.read();
 
-        (OfficialRooms { data, ad_room, promoted_rooms }, packet.read_index - 6)
+        (
+            OfficialRooms {
+                data,
+                ad_room,
+                promoted_rooms,
+            },
+            packet.read_index - 6,
+        )
     }
 
     fn to_packet(&self) -> Vec<u8> {
@@ -1231,7 +1272,7 @@ impl PacketVariable for OfficialRooms {
             self.data.clone(),
             if self.ad_room.is_some() { 1 } else { 0 },
             self.ad_room.clone(),
-            self.promoted_rooms.clone()
+            self.promoted_rooms.clone(),
         ));
 
         packet.get_bytes()[6..].to_vec()
@@ -1241,7 +1282,7 @@ impl PacketVariable for OfficialRooms {
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PopularRoomTagsResult {
-    pub data: PopularRoomTagsData
+    pub data: PopularRoomTagsData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1251,52 +1292,52 @@ pub struct RoomEventCancel {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomEvent {
-    pub data: RoomEventData
+    pub data: RoomEventData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomInfoUpdated {
-    pub flat_id: LegacyId
+    pub flat_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomRating {
     pub rating: i32,
-    pub can_rate: bool
+    pub can_rate: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UserEventCats {
-    pub event_categories: Vec<EventCategory>
+    pub event_categories: Vec<EventCategory>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UserFlatCats {
-    pub nodes: Vec<FlatCategory>
+    pub nodes: Vec<FlatCategory>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CustomStackingHeightUpdate {
     pub furni_id: LegacyId,
-    pub height: i32
+    pub height: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CustomUserNotification {
-    pub code: i32
+    pub code: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct DiceValue {
     pub id: LegacyId,
-    pub value: i32
+    pub value: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1307,7 +1348,7 @@ pub struct FurniRentOrBuyoutOffer {
     pub buyout: bool,
     pub price_in_credits: i32,
     pub price_in_activity_points: i32,
-    pub activity_point_type: i32
+    pub activity_point_type: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1318,21 +1359,21 @@ pub struct GuildFurniContextMenuInfo {
     pub guild_name: String,
     pub guild_home_room_id: LegacyId,
     pub user_is_member: bool,
-    pub guild_has_readable_forum: bool
+    pub guild_has_readable_forum: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct OneWayDoorStatus {
     pub id: LegacyId,
-    pub status: i32
+    pub status: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct OpenPetPackageRequested {
     pub object_id: LegacyId,
-    pub figure_data: Option<PetFigureData>
+    pub figure_data: Option<PetFigureData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1340,7 +1381,7 @@ pub struct OpenPetPackageRequested {
 pub struct OpenPetPackageResult {
     pub object_id: LegacyId,
     pub name_validation_status: i32,
-    pub name_validation_info: String
+    pub name_validation_info: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1352,19 +1393,19 @@ pub struct PresentOpened {
     pub placed_item_id: LegacyId,
     pub placed_item_type: String,
     pub placed_in_room: bool,
-    pub pet_figure_string: String
+    pub pet_figure_string: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RentableSpaceRentFailed {
-    pub reason: i32
+    pub reason: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RentableSpaceRentOk {
-    pub expiry_time: i32
+    pub expiry_time: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1375,20 +1416,20 @@ pub struct RentableSpaceStatus {
     pub renter_id: LegacyId,
     pub renter_name: String,
     pub time_remaining: i32,
-    pub price: i32
+    pub price: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RequestSpamWallPostIt {
     pub item_id: LegacyId,
-    pub location: String
+    pub location: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomDimmerPresets {
-    pub presets: Vec<RoomDimmerPresetsMessageData>
+    pub presets: Vec<RoomDimmerPresetsMessageData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1396,14 +1437,14 @@ pub struct RoomDimmerPresets {
 pub struct RoomMessageNotification {
     pub room_id: LegacyId,
     pub room_name: String,
-    pub message_count: i32
+    pub message_count: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct YoutubeControlVideo {
     pub furni_id: LegacyId,
-    pub command_id: LegacyId
+    pub command_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1411,7 +1452,7 @@ pub struct YoutubeControlVideo {
 pub struct YoutubeDisplayPlaylists {
     pub furni_id: LegacyId,
     pub playlist: Vec<YoutubeDisplayPlaylist>,
-    pub selected_playlist_id: String
+    pub selected_playlist_id: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1421,7 +1462,7 @@ pub struct YoutubeDisplayVideo {
     pub video_id: String,
     pub start_at_seconds: i32,
     pub end_at_seconds: i32,
-    pub state: i32
+    pub state: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PartialEq)]
@@ -1431,11 +1472,14 @@ pub struct PollContents {
     pub start_message: String,
     pub end_message: String,
     pub questions: Vec<PollQuestion>,
-    pub nps_poll: bool
+    pub nps_poll: bool,
 }
 
 impl PacketVariable for PollContents {
-    fn from_packet(bytes: Vec<u8>) -> (Self, usize) where Self: Sized {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
         let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
 
         let (id, start_message, end_message) = packet.read();
@@ -1448,15 +1492,26 @@ impl PacketVariable for PollContents {
         }
         let nps_poll = packet.read();
 
-        (PollContents {
-            id, start_message, end_message, questions, nps_poll
-        }, packet.read_index - 6)
+        (
+            PollContents {
+                id,
+                start_message,
+                end_message,
+                questions,
+                nps_poll,
+            },
+            packet.read_index - 6,
+        )
     }
 
     fn to_packet(&self) -> Vec<u8> {
         let mut packet = HPacket::from_header_id(0);
 
-        packet.append((self.id, self.start_message.clone(), self.end_message.clone()));
+        packet.append((
+            self.id,
+            self.start_message.clone(),
+            self.end_message.clone(),
+        ));
         packet.append(LegacyLength(self.questions.len() as i32));
         for question in self.questions.iter() {
             packet.append(question.clone());
@@ -1478,7 +1533,7 @@ pub struct PollOffer {
     pub id: LegacyId,
     pub offer_type: String,
     pub headline: String,
-    pub summary: String
+    pub summary: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1486,7 +1541,7 @@ pub struct PollOffer {
 pub struct QuestionAnswered {
     pub user_id: LegacyId,
     pub value: String,
-    pub answer_counts: HashMap<String, i32>
+    pub answer_counts: HashMap<String, i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1496,14 +1551,14 @@ pub struct Question {
     pub poll_id: LegacyId,
     pub question_id: LegacyId,
     pub duration: i32,
-    pub question: QuestionData
+    pub question: QuestionData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct QuestionFinished {
     pub question_id: LegacyId,
-    pub answer_counts: HashMap<String, i32>
+    pub answer_counts: HashMap<String, i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1511,7 +1566,7 @@ pub struct QuestionFinished {
 pub struct ErrorReport {
     pub message_id: LegacyId,
     pub error_code: i32,
-    pub timestamp: String
+    pub timestamp: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1520,13 +1575,13 @@ pub struct BonusRareInfo {
     pub product_type: String,
     pub product_class_id: i32, // Might be a LegacyId,
     pub total_coins_for_bonus: i32,
-    pub coins_still_required_to_buy: i32
+    pub coins_still_required_to_buy: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct BuildersClubFurniCount {
-    pub furni_count: i32
+    pub furni_count: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1535,7 +1590,7 @@ pub struct BuildersClubSubscriptionStatus {
     pub seconds_left: i32,
     pub furni_limit: i32,
     pub max_furni_limit: i32,
-    pub seconds_left_with_grace: Option<i32>
+    pub seconds_left_with_grace: Option<i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1545,7 +1600,7 @@ pub struct BundleDiscountRuleset {
     pub bundle_size: i32,
     pub bundle_discount_size: i32,
     pub bonus_threshold: i32,
-    pub additional_bonus_discount_threshold_quantities: Vec<i32>
+    pub additional_bonus_discount_threshold_quantities: Vec<i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1553,7 +1608,7 @@ pub struct BundleDiscountRuleset {
 pub struct CatalogIndex {
     pub root: CatalogNodeData,
     pub new_additions_available: bool,
-    pub catalog_type: String
+    pub catalog_type: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1566,7 +1621,7 @@ pub struct CatalogPage {
     pub offers: Vec<CatalogPageMessageOfferData>,
     pub offer_id: LegacyId,
     pub accept_season_currency_as_credits: bool,
-    pub front_page_items: Option<Vec<FrontPageItem>>
+    pub front_page_items: Option<Vec<FrontPageItem>>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1574,14 +1629,14 @@ pub struct CatalogPage {
 pub struct CatalogPageWithEarliestExpiry {
     pub page_name: String,
     pub seconds_to_expiry: i32,
-    pub image: String
+    pub image: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CatalogPublished {
     pub instantly_refresh_catalogue: bool,
-    pub new_furni_data_hash: Option<String>
+    pub new_furni_data_hash: Option<String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1590,14 +1645,14 @@ pub struct ClubGiftInfo {
     pub days_until_next_gift: i32,
     pub gifts_available: i32,
     pub offers: Vec<CatalogPageMessageOfferData>,
-    pub gift_data: Vec<ClubGiftData>
+    pub gift_data: Vec<ClubGiftData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ClubGiftSelected {
     pub product_code: String,
-    pub products: Vec<CatalogPageMessageProductData>
+    pub products: Vec<CatalogPageMessageProductData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1612,13 +1667,13 @@ pub struct GiftWrappingConfiguration {
     pub stuff_types: Vec<i32>,
     pub box_types: Vec<i32>,
     pub ribbon_types: Vec<i32>,
-    pub default_stuff_types: Vec<i32>
+    pub default_stuff_types: Vec<i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct HabboClubExtendOffer {
-    pub offer: ClubOfferExtendData
+    pub offer: ClubOfferExtendData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1631,7 +1686,7 @@ pub struct LimitedOfferAppearingNext {
     pub appears_in_seconds: i32,
     pub page_id: LegacyId,
     pub offer_id: LegacyId,
-    pub product_type: String
+    pub product_type: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1639,58 +1694,58 @@ pub struct LimitedOfferAppearingNext {
 pub struct NotEnoughBalance {
     pub not_enough_credits: bool,
     pub not_enough_activity_points: bool,
-    pub activity_point_type: Option<i32>
+    pub activity_point_type: Option<i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ProductOffer {
-    pub offer_data: CatalogPageMessageOfferData
+    pub offer_data: CatalogPageMessageOfferData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PurchaseError {
-    pub error_code: i32
+    pub error_code: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PurchaseNotAllowed {
-    pub error_code: i32
+    pub error_code: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PurchaseOK {
-    pub offer: PurchaseOKMessageOfferData
+    pub offer: PurchaseOKMessageOfferData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomAdPurchaseInfo {
     pub is_vip: bool,
-    pub rooms: Vec<RoomEntryData>
+    pub rooms: Vec<RoomEntryData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct SeasonalCalendarDailyOffer {
     pub page_id: LegacyId,
-    pub offer_data: Vec<CatalogPageMessageOfferData>
+    pub offer_data: Vec<CatalogPageMessageOfferData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct SellablePetPalettes {
     pub product_code: String,
-    pub sellable_palettes: Vec<SellablePetPaletteData>
+    pub sellable_palettes: Vec<SellablePetPaletteData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct SnowWarGameTokens {
-    pub offers: Vec<SnowWarGameTokenOffer>
+    pub offers: Vec<SnowWarGameTokenOffer>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1710,7 +1765,7 @@ pub struct TargetedOffer {
     pub image_url: String,
     pub icon_image_url: String,
     pub offer_type: i32,
-    pub sub_product_codes: Vec<String>
+    pub sub_product_codes: Vec<String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1720,14 +1775,14 @@ pub struct TargetedOfferNotFound {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct VoucherRedeemError {
-    pub error_code: String
+    pub error_code: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct VoucherRedeemOk {
     pub product_description: String,
-    pub product_name: String
+    pub product_name: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1736,7 +1791,7 @@ pub struct FavoriteMembershipUpdate {
     pub room_index: i32,
     pub habbo_group_id: LegacyId,
     pub status: i32,
-    pub habbo_group_name: String
+    pub habbo_group_name: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1744,13 +1799,13 @@ pub struct FavoriteMembershipUpdate {
 pub struct FloorHeightMap {
     pub is_small_scale: bool,
     pub fixed_walls_height: i32,
-    pub text: String
+    pub text: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FurnitureAliases {
-    pub aliases: HashMap<String, String>
+    pub aliases: HashMap<String, String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PartialEq)]
@@ -1758,12 +1813,15 @@ pub struct FurnitureAliases {
 pub struct HeightMap {
     pub width: i32,
     pub height: i32,
-    pub tiles: Vec<HeightMapTile>
+    pub tiles: Vec<HeightMapTile>,
 }
 
 impl HeightMap {
     pub fn get_tile(self, x: usize, y: usize) -> Option<HeightMapTile> {
-        if x >= self.width as usize || y >= self.height as usize || y * self.width as usize + x >= self.tiles.len() {
+        if x >= self.width as usize
+            || y >= self.height as usize
+            || y * self.width as usize + x >= self.tiles.len()
+        {
             None
         } else {
             Some(self.tiles[y * self.width as usize + x].clone())
@@ -1771,34 +1829,43 @@ impl HeightMap {
     }
 
     pub fn set_tile(&mut self, x: usize, y: usize, tile: HeightMapTile) {
-        if !(x >= self.width as usize || y >= self.height as usize || y * self.width as usize + x >= self.tiles.len()) {
+        if !(x >= self.width as usize
+            || y >= self.height as usize
+            || y * self.width as usize + x >= self.tiles.len())
+        {
             self.tiles[y * self.width as usize + x] = tile.clone()
         }
     }
 }
 
 impl PacketVariable for HeightMap {
-    fn from_packet(bytes: Vec<u8>) -> (Self, usize) where Self: Sized {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
         let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
 
         let (width, size): (i32, LegacyLength) = packet.read();
-        let height = *size as i32/width;
+        let height = *size as i32 / width;
         let mut tiles = Vec::new();
         for _ in 0..*size {
             tiles.push(packet.read());
         }
 
-        (Self {
-            width, height, tiles
-        }, packet.read_index - 6)
+        (
+            Self {
+                width,
+                height,
+                tiles,
+            },
+            packet.read_index - 6,
+        )
     }
 
     fn to_packet(&self) -> Vec<u8> {
         let mut packet = HPacket::from_header_id(0);
 
-        packet.append((
-            self.width, self.width * self.height
-        ));
+        packet.append((self.width, self.width * self.height));
         if self.width * self.height != self.tiles.len() as i32 {
             panic!("HeightMap: There should be width * height tiles");
         }
@@ -1813,11 +1880,14 @@ impl PacketVariable for HeightMap {
 #[derive(BaseParser, Clone, Debug, Default, PartialEq)]
 #[to(direction = 0)]
 pub struct HeightMapUpdate {
-    pub tile_updates: Vec<HeightMapTileUpdate>
+    pub tile_updates: Vec<HeightMapTileUpdate>,
 }
 
 impl PacketVariable for HeightMapUpdate {
-    fn from_packet(bytes: Vec<u8>) -> (Self, usize) where Self: Sized {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
         let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
 
         let mut tile_updates = Vec::new();
@@ -1826,9 +1896,7 @@ impl PacketVariable for HeightMapUpdate {
             tile_updates.push(packet.read());
         }
 
-        (Self {
-            tile_updates
-        }, packet.read_index - 6)
+        (Self { tile_updates }, packet.read_index - 6)
     }
 
     fn to_packet(&self) -> Vec<u8> {
@@ -1846,19 +1914,20 @@ impl PacketVariable for HeightMapUpdate {
 #[derive(BaseParser, Clone, Debug, Default, PartialEq)]
 #[to(direction = 0)]
 pub struct ItemAdd {
-    pub item: WallItem
+    pub item: WallItem,
 }
 
 impl PacketVariable for ItemAdd {
-    fn from_packet(bytes: Vec<u8>) -> (Self, usize) where Self: Sized {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
         let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
 
         let mut item: WallItem = packet.read();
         item.owner_name = packet.read();
 
-        (Self {
-            item
-        }, packet.read_index - 6)
+        (Self { item }, packet.read_index - 6)
     }
 
     fn to_packet(&self) -> Vec<u8> {
@@ -1870,45 +1939,46 @@ impl PacketVariable for ItemAdd {
 #[to(direction = 0)]
 pub struct ItemDataUpdate {
     pub id: LegacyStringId,
-    pub item_data: String
+    pub item_data: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ItemRemove {
     pub item_id: LegacyStringId,
-    pub picker_id: LegacyId
+    pub picker_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Items {
     pub owner_names: HashMap<LegacyId, String>,
-    pub items: Vec<WallItem>
+    pub items: Vec<WallItem>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ItemUpdate {
-    pub data: WallItem
+    pub data: WallItem,
 }
 
 #[derive(BaseParser, Clone, Debug, PartialEq)]
 #[to(direction = 0)]
 pub struct ObjectAdd {
-    pub object: FloorItem
+    pub object: FloorItem,
 }
 
 impl PacketVariable for ObjectAdd {
-    fn from_packet(bytes: Vec<u8>) -> (Self, usize) where Self: Sized {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
         let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
 
         let mut object: FloorItem = packet.read();
         object.owner_name = packet.read();
 
-        (Self {
-            object
-        }, packet.read_index - 6)
+        (Self { object }, packet.read_index - 6)
     }
 
     fn to_packet(&self) -> Vec<u8> {
@@ -1920,7 +1990,7 @@ impl PacketVariable for ObjectAdd {
 #[to(direction = 0)]
 pub struct ObjectDataUpdate {
     pub id: LegacyStringId,
-    pub data: StuffData
+    pub data: StuffData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1929,40 +1999,40 @@ pub struct ObjectRemove {
     pub id: LegacyStringId,
     pub is_expired: bool,
     pub picker_id: LegacyId,
-    pub delay: i32
+    pub delay: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ObjectsDataUpdate {
-    pub data_updates: HashMap<LegacyId, StuffData>
+    pub data_updates: HashMap<LegacyId, StuffData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Objects {
     pub owner_names: HashMap<LegacyId, String>,
-    pub objects: Vec<FloorItem>
+    pub objects: Vec<FloorItem>,
 }
 
 #[derive(BaseParser, Clone, Debug, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ObjectUpdate {
-    pub data: FloorItem
+    pub data: FloorItem,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomEntryInfo {
     pub guest_room_id: LegacyId,
-    pub is_owner: bool
+    pub is_owner: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomProperty {
     pub prop_type: String,
-    pub prop_value: String
+    pub prop_value: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -1970,7 +2040,7 @@ pub struct RoomProperty {
 pub struct RoomVisualizationSettings {
     pub walls_hidden: bool,
     pub wall_thickness: i32,
-    pub floor_thickness: i32
+    pub floor_thickness: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PartialEq)]
@@ -1985,41 +2055,84 @@ pub struct SlideObjectBundle {
     pub avatar_movement_type: i32,
     pub avatar_id: LegacyId,
     pub avatar_old_z: LegacyDouble,
-    pub avatar_new_z: LegacyDouble
+    pub avatar_new_z: LegacyDouble,
 }
 
 impl PacketVariable for SlideObjectBundle {
-    fn from_packet(bytes: Vec<u8>) -> (Self, usize) where Self: Sized {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
         let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
 
         let (old_x, old_y, new_x, new_y, objects_z, id) = packet.read();
-        let avatar_movement_type  = packet.read::<Option<i32>>().unwrap_or(-1);
+        let avatar_movement_type = packet.read::<Option<i32>>().unwrap_or(-1);
 
-        (Self {
-            old_x, old_y, new_x, new_y, objects_z, id, avatar_movement_type,
-            avatar_id: if vec![1, 2].contains(&avatar_movement_type) { packet.read() } else { LegacyId::default() },
-            avatar_old_z: if vec![1, 2].contains(&avatar_movement_type) { packet.read() } else { LegacyDouble::default() },
-            avatar_new_z: if vec![1, 2].contains(&avatar_movement_type) { packet.read() } else { LegacyDouble::default() }
-        }, packet.read_index - 6)
+        (
+            Self {
+                old_x,
+                old_y,
+                new_x,
+                new_y,
+                objects_z,
+                id,
+                avatar_movement_type,
+                avatar_id: if vec![1, 2].contains(&avatar_movement_type) {
+                    packet.read()
+                } else {
+                    LegacyId::default()
+                },
+                avatar_old_z: if vec![1, 2].contains(&avatar_movement_type) {
+                    packet.read()
+                } else {
+                    LegacyDouble::default()
+                },
+                avatar_new_z: if vec![1, 2].contains(&avatar_movement_type) {
+                    packet.read()
+                } else {
+                    LegacyDouble::default()
+                },
+            },
+            packet.read_index - 6,
+        )
     }
 
     fn to_packet(&self) -> Vec<u8> {
         if vec![1, 2].contains(&self.avatar_movement_type) {
             (
-                self.old_x, self.old_y, self.new_x, self.new_y,
-                self.objects_z.clone(), self.id, self.avatar_movement_type,
-                self.avatar_id, self.avatar_old_z, self.avatar_new_z
-            ).to_packet()
+                self.old_x,
+                self.old_y,
+                self.new_x,
+                self.new_y,
+                self.objects_z.clone(),
+                self.id,
+                self.avatar_movement_type,
+                self.avatar_id,
+                self.avatar_old_z,
+                self.avatar_new_z,
+            )
+                .to_packet()
         } else if self.avatar_movement_type == 0 {
             (
-                self.old_x, self.old_y, self.new_x, self.new_y,
-                self.objects_z.clone(), self.id, self.avatar_movement_type
-            ).to_packet()
+                self.old_x,
+                self.old_y,
+                self.new_x,
+                self.new_y,
+                self.objects_z.clone(),
+                self.id,
+                self.avatar_movement_type,
+            )
+                .to_packet()
         } else {
             (
-                self.old_x, self.old_y, self.new_x, self.new_y,
-                self.objects_z.clone(), self.id
-            ).to_packet()
+                self.old_x,
+                self.old_y,
+                self.new_x,
+                self.new_y,
+                self.objects_z.clone(),
+                self.id,
+            )
+                .to_packet()
         }
     }
 }
@@ -2027,7 +2140,7 @@ impl PacketVariable for SlideObjectBundle {
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct SpecialRoomEffect {
-    pub effect_id: LegacyId
+    pub effect_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2037,25 +2150,25 @@ pub struct UserChange {
     pub figure: String,
     pub sex: String,
     pub custom_info: String,
-    pub achievement_score: i32
+    pub achievement_score: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UserRemove {
-    pub id: LegacyStringId
+    pub id: LegacyStringId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Users {
-    pub users: Vec<User>
+    pub users: Vec<User>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UserUpdate {
-    pub users: Vec<UserUpdateMessageData>
+    pub users: Vec<UserUpdateMessageData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2068,7 +2181,7 @@ pub struct WiredFurniMove {
     pub old_z: LegacyDouble,
     pub new_z: LegacyDouble,
     pub furni_id: LegacyId,
-    pub animation_time: i32
+    pub animation_time: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2082,49 +2195,49 @@ pub struct WiredUserMove {
     pub new_z: LegacyDouble,
     pub user_id: LegacyId,
     pub move_type: WiredUserMoveType,
-    pub animation_time: i32
+    pub animation_time: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Open {
-    pub stuff_id: LegacyId
+    pub stuff_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct WiredFurniAction {
-    pub def: ActionDefinition
+    pub def: ActionDefinition,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct WiredFurniAddon {
-    pub def: AddonDefinition
+    pub def: AddonDefinition,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct WiredFurniCondition {
-    pub def: ConditionDefinition
+    pub def: ConditionDefinition,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct WiredFurniSelector {
-    pub def: SelectorDefinition
+    pub def: SelectorDefinition,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct WiredFurniTrigger {
-    pub def: TriggerDefinition
+    pub def: TriggerDefinition,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct WiredRewardResult {
-    pub reason: i32
+    pub reason: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2134,20 +2247,20 @@ pub struct WiredSaveSuccess {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct WiredValidationError {
-    pub info: String
+    pub info: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CommunityGoalHallOfFame {
     pub goal_code: String,
-    pub hof: Vec<HallOfFameEntryData>
+    pub hof: Vec<HallOfFameEntryData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CommunityGoalProgress {
-    pub data: CommunityGoalData
+    pub data: CommunityGoalData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2155,26 +2268,26 @@ pub struct CommunityGoalProgress {
 pub struct ConcurrentUsersGoalProgress {
     pub state: i32,
     pub user_count: i32,
-    pub user_count_goal: i32
+    pub user_count_goal: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct EpicPopup {
-    pub image_uri: String
+    pub image_uri: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct QuestCancelled {
-    pub expired: bool
+    pub expired: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct QuestCompleted {
     pub quest_data: QuestMessageData,
-    pub show_dialog: bool
+    pub show_dialog: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2182,26 +2295,26 @@ pub struct QuestCompleted {
 pub struct QuestDaily {
     pub quest: QuestMessageData,
     pub easy_quest_count: i32,
-    pub hard_quest_count: i32
+    pub hard_quest_count: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Quest {
-    pub quest: QuestMessageData
+    pub quest: QuestMessageData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Quests {
     pub quests: Vec<QuestMessageData>,
-    pub open_window: bool
+    pub open_window: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct SeasonalQuests {
-    pub quests: Vec<QuestMessageData>
+    pub quests: Vec<QuestMessageData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2210,7 +2323,7 @@ pub struct TalentLevelUp {
     pub talent_track_name: String,
     pub level: i32,
     pub reward_perks: Vec<TalentTrackRewardPerk>,
-    pub reward_products: Vec<TalentTrackRewardProduct>
+    pub reward_products: Vec<TalentTrackRewardProduct>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2218,14 +2331,14 @@ pub struct TalentLevelUp {
 pub struct TalentTrackLevel {
     pub talent_track_name: String,
     pub level: i32,
-    pub max_level: i32
+    pub max_level: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct TalentTrack {
     pub name: String,
-    pub levels: Vec<TalentTrackLevelData>
+    pub levels: Vec<TalentTrackLevelData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2233,7 +2346,7 @@ pub struct TalentTrack {
 pub struct AvailabilityStatus {
     pub is_open: bool,
     pub on_shut_down: bool,
-    pub is_authentic_habbo: Option<bool>
+    pub is_authentic_habbo: Option<bool>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2241,20 +2354,20 @@ pub struct AvailabilityStatus {
 pub struct InfoHotelClosed {
     pub open_hour: i32,
     pub open_minute: i32,
-    pub user_thrown_out_at_close: bool
+    pub user_thrown_out_at_close: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct InfoHotelClosing {
-    pub minutes_until_closing: i32
+    pub minutes_until_closing: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct LoginFailedHotelClosed {
     pub open_hour: i32,
-    pub open_minute: i32
+    pub open_minute: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2262,7 +2375,7 @@ pub struct LoginFailedHotelClosed {
 pub struct MaintenanceStatus {
     pub is_in_maintenance: bool,
     pub minutes_until_maintenance: i32,
-    pub duration: Option<bool>
+    pub duration: Option<bool>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2270,7 +2383,7 @@ pub struct MaintenanceStatus {
 pub struct Game2FriendsLeaderboard {
     pub leaderboard: Vec<LeaderBoardEntry>,
     pub total_list_size: i32,
-    pub game_type_id: i32
+    pub game_type_id: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2279,7 +2392,7 @@ pub struct Game2TotalGroupLeaderboard {
     pub leaderboard: Vec<LeaderBoardEntry>,
     pub total_list_size: i32,
     pub game_type_id: i32,
-    pub favourite_group_id: LegacyId
+    pub favourite_group_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2287,7 +2400,7 @@ pub struct Game2TotalGroupLeaderboard {
 pub struct Game2TotalLeaderboard {
     pub leaderboard: Vec<LeaderBoardEntry>,
     pub total_list_size: i32,
-    pub game_type_id: i32
+    pub game_type_id: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2300,7 +2413,7 @@ pub struct Game2WeeklyFriendsLeaderboard {
     pub minutes_until_reset: i32,
     pub leaderboard: Vec<LeaderBoardEntry>,
     pub total_list_size: i32,
-    pub game_type_id: i32
+    pub game_type_id: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2314,7 +2427,7 @@ pub struct Game2WeeklyGroupLeaderboard {
     pub leaderboard: Vec<LeaderBoardEntry>,
     pub total_list_size: i32,
     pub game_type_id: i32,
-    pub favourite_group_id: LegacyId
+    pub favourite_group_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2327,7 +2440,7 @@ pub struct Game2WeeklyLeaderboard {
     pub minutes_until_reset: i32,
     pub leaderboard: Vec<LeaderBoardEntry>,
     pub total_list_size: i32,
-    pub game_type_id: i32
+    pub game_type_id: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2335,7 +2448,7 @@ pub struct Game2WeeklyLeaderboard {
 pub struct Game2AccountGameStatus {
     pub game_type_id: i32,
     pub free_games_left: i32,
-    pub games_played_total: i32
+    pub games_played_total: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2345,7 +2458,7 @@ pub struct Game2GameCancelled {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2GameCreated {
-    pub game_lobby_data: GameLobbyData
+    pub game_lobby_data: GameLobbyData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2354,43 +2467,43 @@ pub struct Game2GameDirectoryStatus {
     pub status: i32,
     pub block_length: i32,
     pub games_played: i32,
-    pub free_games_left: i32
+    pub free_games_left: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2GameLongData {
-    pub game_lobby_data: GameLobbyData
+    pub game_lobby_data: GameLobbyData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2GameStarted {
-    pub game_lobby_data: GameLobbyData
+    pub game_lobby_data: GameLobbyData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2InArenaQueue {
-    pub position: i32
+    pub position: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2JoiningGameFailed {
-    pub reason: i32
+    pub reason: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2StartCounter {
-    pub count_down_length: i32
+    pub count_down_length: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2StartingGameFailed {
-    pub reason: i32
+    pub reason: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2400,38 +2513,38 @@ pub struct Game2StopCounter {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2UserBlocked {
-    pub player_block_length: i32
+    pub player_block_length: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2UserJoinedGame {
     pub user: GameLobbyPlayerData,
-    pub was_team_switched: bool
+    pub was_team_switched: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2UserLeftGame {
-    pub user_id: LegacyId
+    pub user_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct AcceptFriendResult {
-    pub failures: Vec<AcceptFriendFailureData>
+    pub failures: Vec<AcceptFriendFailureData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FindFriendsProcessResult {
-    pub success: bool
+    pub success: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FollowFriendFailed {
-    pub error_code: i32
+    pub error_code: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2439,7 +2552,7 @@ pub struct FollowFriendFailed {
 pub struct FriendListFragment {
     pub total_fragments: i32,
     pub fragment_no: i32,
-    pub friend_fragment: Vec<FriendData>
+    pub friend_fragment: Vec<FriendData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PartialEq)]
@@ -2448,11 +2561,14 @@ pub struct FriendListUpdate {
     pub cats: Vec<FriendCategoryData>,
     pub removed_friend_ids: Vec<LegacyId>,
     pub updated_friends: Vec<FriendData>,
-    pub added_friends: Vec<FriendData>
+    pub added_friends: Vec<FriendData>,
 }
 
 impl PacketVariable for FriendListUpdate {
-    fn from_packet(bytes: Vec<u8>) -> (Self, usize) where Self: Sized {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
         let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
 
         let cats = packet.read();
@@ -2469,16 +2585,23 @@ impl PacketVariable for FriendListUpdate {
             }
         }
 
-        (Self {
-            cats, removed_friend_ids, updated_friends, added_friends
-        }, packet.read_index - 6)
+        (
+            Self {
+                cats,
+                removed_friend_ids,
+                updated_friends,
+                added_friends,
+            },
+            packet.read_index - 6,
+        )
     }
 
     fn to_packet(&self) -> Vec<u8> {
         let mut packet = HPacket::from_header_id(0);
 
         packet.append(self.cats.clone());
-        let size = self.removed_friend_ids.len() + self.updated_friends.len() + self.added_friends.len();
+        let size =
+            self.removed_friend_ids.len() + self.updated_friends.len() + self.added_friends.len();
         packet.append(LegacyLength(size as i32));
         for id in self.removed_friend_ids.clone() {
             packet.append((-1i32, id));
@@ -2499,21 +2622,21 @@ impl PacketVariable for FriendListUpdate {
 pub struct FriendNotification {
     pub avatar_id: String,
     pub type_code: i32,
-    pub message: String
+    pub message: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FriendRequests {
     pub total_req_count: i32,
-    pub reqs: Vec<FriendRequestData>
+    pub reqs: Vec<FriendRequestData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct HabboSearchResult {
     pub friends: Vec<HabboSearchResultData>,
-    pub others: Vec<HabboSearchResultData>
+    pub others: Vec<HabboSearchResultData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2521,14 +2644,14 @@ pub struct HabboSearchResult {
 pub struct InstantMessageError {
     pub error_code: i32,
     pub user_id: LegacyId,
-    pub message: String
+    pub message: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct MessengerError {
     pub client_message_id: i32,
-    pub error_code: i32
+    pub error_code: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2537,7 +2660,7 @@ pub struct MessengerInit {
     pub user_friend_limit: i32,
     pub normal_friend_limit: i32,
     pub extended_friend_limit: i32,
-    pub categories: Vec<FriendCategoryData>
+    pub categories: Vec<FriendCategoryData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2547,7 +2670,7 @@ pub struct MiniMailNewMessage {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct MiniMailUnreadCount {
-    pub unread_message_count: i32
+    pub unread_message_count: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2556,32 +2679,42 @@ pub struct NewConsole {
     pub sender_id: LegacyId,
     pub message_text: String,
     pub seconds_since_sent: i32,
-    pub extra_data: String
+    pub extra_data: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct NewFriendRequest {
-    pub req: FriendRequestData
+    pub req: FriendRequestData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomInviteError {
     pub error_code: i32,
-    pub failed_recipients: Vec<LegacyId>
+    pub failed_recipients: Vec<LegacyId>,
 }
 
 impl PacketVariable for RoomInviteError {
-    fn from_packet(bytes: Vec<u8>) -> (Self, usize) where Self: Sized {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
         let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
 
         let error_code = packet.read();
 
-        (Self {
-            error_code,
-            failed_recipients: if error_code == 1 { packet.read() } else { Vec::new() }
-        }, packet.read_index - 6)
+        (
+            Self {
+                error_code,
+                failed_recipients: if error_code == 1 {
+                    packet.read()
+                } else {
+                    Vec::new()
+                },
+            },
+            packet.read_index - 6,
+        )
     }
 
     fn to_packet(&self) -> Vec<u8> {
@@ -2597,7 +2730,7 @@ impl PacketVariable for RoomInviteError {
 #[to(direction = 0)]
 pub struct RoomInvite {
     pub sender_id: LegacyId,
-    pub message_text: String
+    pub message_text: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2607,34 +2740,34 @@ pub struct ConfirmBreedingRequest {
     pub pet_1: BreedingPetInfo,
     pub pet_2: BreedingPetInfo,
     pub rarity_categories: Vec<RarityCategoryData>,
-    pub result_pet_type: i32
+    pub result_pet_type: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ConfirmBreedingResult {
     pub breeding_nest_stuff_id: LegacyId,
-    pub result: i32
+    pub result: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct GoToBreedingNestFailure {
-    pub reason: i32
+    pub reason: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct NestBreedingSuccess {
     pub pet_id: LegacyId,
-    pub rarity_category: i32
+    pub rarity_category: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PetAddedToInventory {
     pub pet: PetData,
-    pub open_inventory: bool
+    pub open_inventory: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2642,7 +2775,7 @@ pub struct PetAddedToInventory {
 pub struct PetBreeding {
     pub state: i32,
     pub own_pet_id: LegacyId,
-    pub other_pet_id: LegacyId
+    pub other_pet_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2650,20 +2783,20 @@ pub struct PetBreeding {
 pub struct PetInventory {
     pub total_fragments: i32,
     pub fragment_no: i32,
-    pub pet_list_fragment: Vec<PetData>
+    pub pet_list_fragment: Vec<PetData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PetReceived {
     pub bought_as_gift: bool,
-    pub pet: PetData
+    pub pet: PetData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PetRemovedFromInventory {
-    pub pet_id: LegacyId
+    pub pet_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2671,7 +2804,7 @@ pub struct PetRemovedFromInventory {
 pub struct ChangeUserNameResult {
     pub result_code: i32,
     pub name: String,
-    pub name_suggestions: Vec<String>
+    pub name_suggestions: Vec<String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2679,65 +2812,65 @@ pub struct ChangeUserNameResult {
 pub struct CheckUserNameResult {
     pub result_code: i32,
     pub name: String,
-    pub name_suggestions: Vec<String>
+    pub name_suggestions: Vec<String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FigureUpdate {
     pub figure: String,
-    pub gender: String
+    pub gender: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Wardrobe {
     pub state: i32,
-    pub outfits: Vec<OutfitData>
+    pub outfits: Vec<OutfitData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct BotAddedToInventory {
     pub item: BotData,
-    pub open_inventory: bool
+    pub open_inventory: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct BotInventory {
-    pub items: Vec<BotData>
+    pub items: Vec<BotData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct BotRemovedFromInventory {
-    pub item_id: LegacyId
+    pub item_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Achievement {
-    pub achievement: AchievementData
+    pub achievement: AchievementData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Achievements {
     pub achievements: Vec<AchievementData>,
-    pub default_category: String
+    pub default_category: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct AchievementsScore {
-    pub score: i32
+    pub score: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct LatencyPingResponse {
-    pub request_id: i32
+    pub request_id: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2748,7 +2881,7 @@ pub struct JukeboxPlayListFull {}
 #[to(direction = 0)]
 pub struct JukeboxSongDisks {
     pub max_length: i32,
-    pub song_disks: HashMap<i32, i32>
+    pub song_disks: HashMap<i32, i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2758,39 +2891,39 @@ pub struct NowPlaying {
     pub current_position: i32,
     pub next_song_id: LegacyId,
     pub next_position: i32,
-    pub sync_count: i32
+    pub sync_count: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct OfficialSongId {
     pub official_song_id: String,
-    pub song_id: LegacyId
+    pub song_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PlayList {
     pub synchronization_count: i32,
-    pub play_list: Vec<PlayListEntry>
+    pub play_list: Vec<PlayListEntry>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PlayListSongAdded {
-    pub entry: PlayListEntry
+    pub entry: PlayListEntry,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct TraxSongInfo {
-    pub songs: Vec<SongInfoEntry>
+    pub songs: Vec<SongInfoEntry>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UserSongDisksInventory {
-    pub song_disks: HashMap<i32, i32>
+    pub song_disks: HashMap<i32, i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2798,50 +2931,50 @@ pub struct UserSongDisksInventory {
 pub struct CreditVaultStatus {
     pub is_unlocked: bool,
     pub total_balance: i32,
-    pub withdraw_balance: i32
+    pub withdraw_balance: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct IncomeRewardClaimResponse {
     pub reward_category: i8,
-    pub result: bool
+    pub result: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct IncomeRewardStatus {
-    pub data: Vec<IncomeReward>
+    pub data: Vec<IncomeReward>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct NavigatorCollapsedCategories {
-    pub collapsed_categories: Vec<String>
+    pub collapsed_categories: Vec<String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct NavigatorLiftedRooms {
-    pub lifted_rooms: Vec<LiftedRoomData>
+    pub lifted_rooms: Vec<LiftedRoomData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct NavigatorMetaData {
-    pub top_level_contexts: Vec<TopLevelContext>
+    pub top_level_contexts: Vec<TopLevelContext>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct NavigatorSavedSearches {
-    pub saved_searches: Vec<SavedSearch>
+    pub saved_searches: Vec<SavedSearch>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct NavigatorSearchResultBlocks {
-    pub search_result: SearchResultSet
+    pub search_result: SearchResultSet,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2852,19 +2985,19 @@ pub struct NewNavigatorPreferences {
     pub window_width: i32,
     pub window_height: i32,
     pub left_pane_hidden: bool,
-    pub results_mode: i32
+    pub results_mode: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2ArenaEntered {
-    pub player: Game2PlayerData
+    pub player: Game2PlayerData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2EnterArenaFailed {
-    pub reason: i32
+    pub reason: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2874,14 +3007,14 @@ pub struct Game2EnterArena {
     pub field_type: i32,
     pub number_of_teams: i32,
     pub players: Vec<Game2PlayerData>,
-    pub game_level: GameLevelData
+    pub game_level: GameLevelData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2GameChatFromPlayer {
     pub user_id: LegacyId,
-    pub chat_message: String
+    pub chat_message: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2890,44 +3023,44 @@ pub struct Game2GameEnding {
     pub time_to_next_state: i32,
     pub game_result: Game2GameResult,
     pub teams: Vec<Game2TeamScoreData>,
-    pub general_stats: Game2SnowWarGameStats
+    pub general_stats: Game2SnowWarGameStats,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2GameRejoin {
-    pub room_before_game: LegacyId
+    pub room_before_game: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2PlayerExitedGameArena {
     pub user_id: LegacyId,
-    pub player_game_object_id: i32
+    pub player_game_object_id: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2PlayerRematches {
-    pub user_id: LegacyId
+    pub user_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2StageEnding {
-    pub time_to_next_state: i32
+    pub time_to_next_state: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2StageLoad {
-    pub game_type: i32
+    pub game_type: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2StageRunning {
-    pub time_to_stage_end: i32
+    pub time_to_stage_end: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2936,21 +3069,21 @@ pub struct Game2StageStarting {
     pub game_type: i32,
     pub room_type: String,
     pub count_down: i32,
-    pub game_objects: GameObjectsData
+    pub game_objects: GameObjectsData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2StageStillLoading {
     pub percentage: i32,
-    pub finished_players: Vec<LegacyId>
+    pub finished_players: Vec<LegacyId>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FigureSetIds {
     pub figure_set_ids: Vec<i32>,
-    pub bound_furniture_names: Vec<String>
+    pub bound_furniture_names: Vec<String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2958,7 +3091,7 @@ pub struct FigureSetIds {
 pub struct CameraPublishStatus {
     pub is_ok: bool,
     pub get_seconds_to_wait: i32,
-    pub get_extra_data_id: Option<String>
+    pub get_extra_data_id: Option<String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2968,14 +3101,14 @@ pub struct CameraPurchaseOK {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CameraStorageUrl {
-    pub url: String
+    pub url: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CompetitionStatus {
     pub is_ok: bool,
-    pub get_error_reason: String
+    pub get_error_reason: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2983,14 +3116,14 @@ pub struct CompetitionStatus {
 pub struct InitCamera {
     pub credit_price: i32,
     pub ducket_price: i32,
-    pub publish_ducket_price: Option<i32>
+    pub publish_ducket_price: Option<i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ThumbnailStatus {
     pub is_ok: bool,
-    pub is_render_limit_hit: bool
+    pub is_render_limit_hit: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -2998,7 +3131,7 @@ pub struct ThumbnailStatus {
 pub struct AvatarEffectActivated {
     pub effect_type: i32,
     pub duration: i32,
-    pub is_permanent: bool
+    pub is_permanent: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3007,31 +3140,31 @@ pub struct AvatarEffectAdded {
     pub effect_type: i32,
     pub sub_type: i32,
     pub duration: i32,
-    pub is_permanent: bool
+    pub is_permanent: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct AvatarEffectExpired {
-    pub effect_type: i32
+    pub effect_type: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct AvatarEffectSelected {
-    pub effect_type: i32
+    pub effect_type: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct AvatarEffects {
-    pub effects: Vec<AvatarEffectData>
+    pub effects: Vec<AvatarEffectData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UserNftWardrobe {
-    pub nft_avatars: Vec<NftWardrobeItem>
+    pub nft_avatars: Vec<NftWardrobeItem>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3039,7 +3172,7 @@ pub struct UserNftWardrobe {
 pub struct UserNftWardrobeSelection {
     pub current_token_id: String,
     pub fallback_figure_string: String,
-    pub fallback_gender: String
+    pub fallback_gender: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3047,66 +3180,66 @@ pub struct UserNftWardrobeSelection {
 pub struct AvatarEffect {
     pub user_id: LegacyId,
     pub effect_id: i32,
-    pub delay_milli_seconds: i32
+    pub delay_milli_seconds: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CarryObject {
     pub user_id: LegacyId,
-    pub item_type: i32
+    pub item_type: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Dance {
     pub user_id: LegacyId,
-    pub dance_style: i32
+    pub dance_style: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Expression {
     pub user_id: LegacyId,
-    pub expression_type: i32
+    pub expression_type: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Sleep {
     pub user_id: LegacyId,
-    pub sleeping: bool
+    pub sleeping: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UseObject {
     pub user_id: LegacyId,
-    pub item_type: i32
+    pub item_type: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ActivityPoints {
-    pub points: HashMap<i32, i32>
+    pub points: HashMap<i32, i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ClubGiftNotification {
-    pub num_gifts: i32
+    pub num_gifts: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ElementPointer {
-    pub key: String
+    pub key: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct HabboAchievementNotification {
-    pub data: AchievementLevelUpData
+    pub data: AchievementLevelUpData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3114,32 +3247,32 @@ pub struct HabboAchievementNotification {
 pub struct HabboActivityPointNotification {
     pub amount: i32,
     pub change: i32,
-    pub point_type: i32
+    pub point_type: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct HabboBroadcast {
-    pub message_text: String
+    pub message_text: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct InfoFeedEnable {
-    pub enabled: bool
+    pub enabled: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct MOTDNotification {
-    pub messages: Vec<String>
+    pub messages: Vec<String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct NotificationDialog {
     pub dialog_type: String,
-    pub parameters: HashMap<String, String>
+    pub parameters: HashMap<String, String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3148,7 +3281,7 @@ pub struct OfferRewardDelivered {
     pub content_type: String,
     pub class_id: i32,
     pub name: String,
-    pub description: String
+    pub description: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3157,7 +3290,7 @@ pub struct PetLevelNotification {
     pub pet_id: LegacyId,
     pub pet_name: String,
     pub level: i32,
-    pub figure_data: PetFigureData
+    pub figure_data: PetFigureData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3167,7 +3300,7 @@ pub struct RestoreClient {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UnseenItems {
-    pub categories: HashMap<i32, Vec<i32>>
+    pub categories: HashMap<i32, Vec<i32>>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3180,28 +3313,28 @@ pub struct AccountPreferences {
     pub room_invites_ignored: bool,
     pub room_camera_follow_disabled: bool,
     pub ui_flags: i32,
-    pub prefered_chat_style: i32
+    pub prefered_chat_style: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct TradeOpenFailed {
     pub reason: i32,
-    pub other_user_name: String
+    pub other_user_name: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct TradingAccept {
     pub user_id: LegacyId,
-    pub user_accepts: i32
+    pub user_accepts: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct TradingClose {
     pub user_id: LegacyId,
-    pub reason: i32
+    pub reason: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3235,7 +3368,7 @@ pub struct TradingOpen {
     pub user_id: LegacyId,
     pub user_can_trade: i32,
     pub other_user_id: LegacyId,
-    pub other_user_can_trade: i32
+    pub other_user_can_trade: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3253,45 +3386,45 @@ pub struct CitizenshipVipOfferPromoEnabled {}
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PerkAllowances {
-    pub perks: Vec<Perk>
+    pub perks: Vec<Perk>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct BotError {
-    pub error_code: i32
+    pub error_code: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct BotForceOpenContextMenu {
-    pub bot_id: LegacyId
+    pub bot_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct BotSkillListUpdate {
     pub bot_id: LegacyId,
-    pub skills: Vec<BotSkillData>
+    pub skills: Vec<BotSkillData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FriendFurniCancelLock {
-    pub stuff_id: LegacyId
+    pub stuff_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FriendFurniOtherLockConfirmed {
-    pub stuff_id: LegacyId
+    pub stuff_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FriendFurniStartConfirmation {
     pub stuff_id: LegacyId,
-    pub is_owner: bool
+    pub is_owner: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3299,13 +3432,13 @@ pub struct FriendFurniStartConfirmation {
 pub struct CfhSanction {
     pub issue_id: LegacyId,
     pub account_id: LegacyId,
-    pub sanction_type: CfhSanctionTypeData
+    pub sanction_type: CfhSanctionTypeData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CfhTopicsInit {
-    pub call_for_help_categories: Vec<CallForHelpCategoryData>
+    pub call_for_help_categories: Vec<CallForHelpCategoryData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3323,53 +3456,53 @@ pub struct SanctionStatus {
     pub next_sanction_length_hours: i32,
     pub _unused2: i32,
     pub has_custom_mute: bool,
-    pub trade_lock_expiry_time: Option<String>
+    pub trade_lock_expiry_time: Option<String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CreditBalance {
-    pub balance: LegacyStringId
+    pub balance: LegacyStringId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct BannedUsersFromRoom {
     pub room_id: LegacyId,
-    pub banned_users: Vec<BannedUserData>
+    pub banned_users: Vec<BannedUserData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FlatControllerAdded {
     pub flat_id: LegacyId,
-    pub data: FlatControllerData
+    pub data: FlatControllerData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FlatControllerRemoved {
     pub flat_id: LegacyId,
-    pub user_id: LegacyId
+    pub user_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct FlatControllers {
     pub room_id: LegacyId,
-    pub controllers: Vec<FlatControllerData>
+    pub controllers: Vec<FlatControllerData>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct MuteAllInRoom {
-    pub all_muted: bool
+    pub all_muted: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct NoSuchFlat {
-    pub flat_id: LegacyId
+    pub flat_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3392,20 +3525,20 @@ pub struct RoomSettingsData {
     pub floor_thickness: i32,
     pub chat_settings: RoomChatSettings,
     pub allow_navigator_dynamic_cats: bool,
-    pub room_moderation_settings: RoomModerationSettings
+    pub room_moderation_settings: RoomModerationSettings,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomSettingsError {
     pub room_id: LegacyId,
-    pub error_code: i32
+    pub error_code: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct RoomSettingsSaved {
-    pub room_id: LegacyId
+    pub room_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3413,39 +3546,39 @@ pub struct RoomSettingsSaved {
 pub struct RoomSettingsSaveError {
     pub room_id: LegacyId,
     pub error_code: i32,
-    pub info: String
+    pub info: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ShowEnforceRoomCategoryDialog {
-    pub selection_type: i32
+    pub selection_type: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UserUnbannedFromRoom {
     pub room_id: LegacyId,
-    pub user_id: LegacyId
+    pub user_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2FullGameStatus {
-    pub full_status: FullGameStatusData
+    pub full_status: FullGameStatusData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct Game2GameStatus {
-    pub status: GameStatusData
+    pub status: GameStatusData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PetBreedingResult {
     pub result_data: PetBreedingResultData,
-    pub other_result_data: PetBreedingResultData
+    pub other_result_data: PetBreedingResultData,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3453,7 +3586,7 @@ pub struct PetBreedingResult {
 pub struct PetCommands {
     pub pet_id: LegacyId,
     pub all_commands: Vec<i32>,
-    pub enabled_commands: Vec<i32>
+    pub enabled_commands: Vec<i32>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3461,7 +3594,7 @@ pub struct PetCommands {
 pub struct PetExperience {
     pub pet_id: LegacyId,
     pub pet_room_index: i32,
-    pub gained_experience: i32
+    pub gained_experience: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3471,7 +3604,7 @@ pub struct PetFigureUpdate {
     pub pet_id: LegacyId,
     pub figure_data: PetFigureData,
     pub has_saddle: bool,
-    pub is_riding: bool
+    pub is_riding: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3503,7 +3636,7 @@ pub struct PetInfo {
     pub max_well_being_seconds: i32,
     pub remaining_well_bein_seconds: i32,
     pub remaining_growing_seconds: i32,
-    pub has_breeding_permission: bool
+    pub has_breeding_permission: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3511,20 +3644,20 @@ pub struct PetInfo {
 pub struct PetLevelUpdate {
     pub room_index: i32,
     pub pet_id: LegacyId,
-    pub level: i32
+    pub level: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PetPlacingError {
-    pub error_code: i32
+    pub error_code: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct PetRespectFailed {
     pub required_days: i32,
-    pub avatar_age_in_days: i32
+    pub avatar_age_in_days: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3535,20 +3668,20 @@ pub struct PetStatusUpdate {
     pub can_breed: bool,
     pub can_harvest: bool,
     pub can_revive: bool,
-    pub has_breeding_permission: bool
+    pub has_breeding_permission: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct BadgePointLimits {
-    pub data: HashMap<String, Vec<BadgeAndPointLimit>>
+    pub data: HashMap<String, Vec<BadgeAndPointLimit>>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct BadgeReceived {
     pub badge_id: i32,
-    pub badge_code: String
+    pub badge_code: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3556,20 +3689,20 @@ pub struct BadgeReceived {
 pub struct Badges {
     pub total_fragments: i32,
     pub fragment_no: i32,
-    pub current_fragment: HashMap<i32, String>
+    pub current_fragment: HashMap<i32, String>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct IsBadgeRequestFulfilled {
     pub request_code: String,
-    pub fulfilled: bool
+    pub fulfilled: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct NewUserExperienceGiftOffer {
-    pub gift_options: Vec<NewUserExperienceGiftOptions>
+    pub gift_options: Vec<NewUserExperienceGiftOptions>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3582,21 +3715,21 @@ pub struct MarketplaceBuyOfferResult {
     pub result: i32,
     pub offer_id: LegacyId,
     pub new_price: i32,
-    pub requested_offer_id: LegacyId
+    pub requested_offer_id: LegacyId,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct MarketplaceCancelOfferResult {
     pub offer_id: LegacyId,
-    pub success: bool
+    pub success: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct MarketplaceCanMakeOfferResult {
     pub result_code: i32,
-    pub token_count: i32
+    pub token_count: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3612,7 +3745,7 @@ pub struct MarketplaceConfiguration {
     pub average_price_period: i32,
     pub selling_fee_percentage: i32,
     pub revenue_limit: i32,
-    pub half_tax_limit: i32
+    pub half_tax_limit: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3623,24 +3756,27 @@ pub struct MarketplaceItemStats {
     pub history_length: i32,
     pub data: Vec<MarketplaceItemStatsData>,
     pub furni_category_id: i32,
-    pub furni_type_id: i32
+    pub furni_type_id: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct MarketplaceMakeOfferResult {
-    pub result: i32
+    pub result: i32,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PartialEq)]
 #[to(direction = 0)]
 pub struct MarketPlaceOffers {
     pub offers: Vec<MarketPlaceOffer>,
-    pub total_items_found: i32
+    pub total_items_found: i32,
 }
 
 impl PacketVariable for MarketPlaceOffers {
-    fn from_packet(bytes: Vec<u8>) -> (Self, usize) where Self: Sized {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
         let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
 
         let mut offers: Vec<MarketPlaceOffer> = Vec::new();
@@ -3651,9 +3787,13 @@ impl PacketVariable for MarketPlaceOffers {
         }
         let total_items_found = packet.read();
 
-        (Self {
-            offers, total_items_found
-        }, packet.read_index - 6)
+        (
+            Self {
+                offers,
+                total_items_found,
+            },
+            packet.read_index - 6,
+        )
     }
 
     fn to_packet(&self) -> Vec<u8> {
@@ -3672,26 +3812,26 @@ impl PacketVariable for MarketPlaceOffers {
 #[to(direction = 0)]
 pub struct MarketPlaceOwnOffers {
     pub credits_waiting: i32,
-    pub offers: Vec<MarketPlaceOffer>
+    pub offers: Vec<MarketPlaceOffer>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct CommunityVoteReceived {
-    pub acknowledged: bool
+    pub acknowledged: bool,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct UserClassification {
-    pub classified_users: Vec<ClassifiedUser>
+    pub classified_users: Vec<ClassifiedUser>,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
 #[to(direction = 0)]
 pub struct ItemStateUpdate {
     pub id: LegacyId,
-    pub item_data: String
+    pub item_data: String,
 }
 
 #[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
@@ -3707,5 +3847,239 @@ pub struct WiredWallItemMove {
     pub new_wall_y: i32,
     pub new_offset_x: i32,
     pub new_offset_y: i32,
-    pub animation_time: i32
+    pub animation_time: i32,
+}
+
+#[derive(BaseParser, Clone, Debug, Default, PacketVariable, PartialEq)]
+#[to(direction = 0)]
+pub struct WiredFurniVariable {
+    pub def: VariableDefinition,
+}
+
+#[derive(Clone, Debug, Default, PacketVariable, PartialEq)]
+pub struct VariableDefinition {
+    pub furni_limit: i32,
+    pub stuff_ids: Vec<LegacyId>,
+    pub stuff_type_id: i32,
+    pub id: LegacyId,
+    pub string_param: String,
+    pub int_params: Vec<i32>,
+    pub variable_ids: Vec<i64>,
+    pub furni_source_types: Vec<i32>,
+    pub user_source_types: Vec<i32>,
+    pub code: i32,
+    pub advanced_mode: bool,
+    pub input_sources_conf: InputSourcesConf,
+    pub allow_wall_furni: bool,
+    pub wired_context: Option<WiredContext>,
+}
+
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct WiredContext {
+    pub room_variables_list: Option<AllVariablesInRoom>,
+    pub furni_variable_info: Option<VariableInfoAndHolders>,
+    pub user_variable_info: Option<VariableInfoAndHolders>,
+    pub global_variable_info: Option<VariableInfoAndValue>,
+    pub reference_variables_list: Option<SharedVariableList>,
+}
+
+impl PacketVariable for WiredContext {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
+        let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
+
+        let mut room_variables_list: Option<AllVariablesInRoom> = None;
+        let mut furni_variable_info: Option<VariableInfoAndHolders> = None;
+        let mut user_variable_info: Option<VariableInfoAndHolders> = None;
+        let mut global_variable_info: Option<VariableInfoAndValue> = None;
+        let mut reference_variables_list: Option<SharedVariableList> = None;
+
+        let count: i32 = packet.read();
+        for _ in 0..count {
+            let identifier: i32 = packet.read();
+            match identifier {
+                1 => room_variables_list = Some(packet.read()),
+                2 => furni_variable_info = Some(packet.read()),
+                3 => user_variable_info = Some(packet.read()),
+                4 => global_variable_info = Some(packet.read()),
+                5 => reference_variables_list = Some(packet.read()),
+                _ => {}
+            };
+        }
+
+        (
+            Self {
+                room_variables_list,
+                furni_variable_info,
+                user_variable_info,
+                global_variable_info,
+                reference_variables_list,
+            },
+            packet.read_index - 6,
+        )
+    }
+
+    fn to_packet(&self) -> Vec<u8> {
+        let mut packet = HPacket::from_header_id(0);
+
+        let mut count: i32 = 0;
+        if self.room_variables_list.is_some() {
+            count += 1
+        };
+        if self.furni_variable_info.is_some() {
+            count += 1
+        };
+        if self.user_variable_info.is_some() {
+            count += 1
+        };
+        if self.global_variable_info.is_some() {
+            count += 1
+        };
+        if self.reference_variables_list.is_some() {
+            count += 1
+        };
+
+        packet.append(count);
+        if self.room_variables_list.is_some() {
+            packet.append(self.room_variables_list.clone())
+        };
+        if self.furni_variable_info.is_some() {
+            packet.append(self.furni_variable_info.clone())
+        };
+        if self.user_variable_info.is_some() {
+            packet.append(self.user_variable_info.clone())
+        };
+        if self.global_variable_info.is_some() {
+            packet.append(self.global_variable_info.clone())
+        };
+        if self.reference_variables_list.is_some() {
+            packet.append(self.reference_variables_list.clone())
+        };
+
+        packet.get_bytes()[6..].to_vec()
+    }
+}
+
+#[derive(Clone, Debug, Default, PacketVariable, PartialEq)]
+pub struct AllVariablesInRoom {
+    pub variables: Vec<WiredVariable>,
+}
+
+#[derive(Clone, Debug, Default, PacketVariable, PartialEq)]
+pub struct VariableInfoAndHolders {
+    pub variable: WiredVariable,
+    pub holders: Vec<(i32, i32)>,
+}
+
+#[derive(Clone, Debug, Default, PacketVariable, PartialEq)]
+pub struct VariableInfoAndValue {
+    pub variable: WiredVariable,
+    pub value: i32,
+}
+
+#[derive(Clone, Debug, Default, PacketVariable, PartialEq)]
+pub struct SharedVariableList {
+    pub shared_variables: Vec<SharedVariable>,
+}
+
+#[derive(Clone, Debug, Default, PartialEq)]
+pub struct WiredVariable {
+    pub variable_id: i64,
+    pub variable_name: String,
+    pub availability_type: i32,
+    pub variable_type: i32,
+    pub always_available: bool,
+    pub can_create_and_delete: bool,
+    pub has_value: bool,
+    pub can_write_value: bool,
+    pub can_intercept_changes: bool,
+    pub is_invisible: bool,
+    pub can_read_creation_time: bool,
+    pub can_read_last_update_time: bool,
+    pub text_connector: Option<Vec<(i32, String)>>,
+}
+
+impl PacketVariable for WiredVariable {
+    fn from_packet(bytes: Vec<u8>) -> (Self, usize)
+    where
+        Self: Sized,
+    {
+        let mut packet = HPacket::from_header_id_and_bytes(0, bytes);
+        let (
+            variable_id,
+            variable_name,
+            availability_type,
+            variable_type,
+            always_available,
+            can_create_and_delete,
+            has_value,
+            can_write_value,
+            can_intercept_changes,
+            is_invisible,
+            can_read_creation_time,
+            can_read_last_update_time,
+        ) = packet.read();
+
+        let has_text_connector: bool = packet.read();
+        let text_connector = if has_text_connector {
+            Some(packet.read())
+        } else {
+            None
+        };
+
+        (
+            Self {
+                variable_id,
+                variable_name,
+                availability_type,
+                variable_type,
+                always_available,
+                can_create_and_delete,
+                has_value,
+                can_write_value,
+                can_intercept_changes,
+                is_invisible,
+                can_read_creation_time,
+                can_read_last_update_time,
+                text_connector,
+            },
+            packet.read_index - 6,
+        )
+    }
+
+    fn to_packet(&self) -> Vec<u8> {
+        let mut packet = HPacket::from_header_id(0);
+        packet.append((
+            self.variable_id,
+            self.variable_name.clone(),
+            self.availability_type,
+            self.variable_type,
+            self.always_available,
+            self.can_create_and_delete,
+            self.has_value,
+            self.can_write_value,
+            self.can_intercept_changes,
+            self.is_invisible,
+            self.can_read_creation_time,
+            self.can_read_last_update_time,
+        ));
+
+        if self.text_connector.is_some() {
+            packet.append(true);
+            packet.append(self.text_connector.clone());
+        } else {
+            packet.append(false);
+        }
+
+        packet.get_bytes()[6..].to_vec()
+    }
+}
+
+#[derive(Clone, Debug, Default, PacketVariable, PartialEq)]
+pub struct SharedVariable {
+    pub room_id: i32,
+    pub room_name: String,
+    pub wired_variable: WiredVariable,
 }
