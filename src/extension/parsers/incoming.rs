@@ -3900,11 +3900,11 @@ impl PacketVariable for WiredContext {
         for _ in 0..count {
             let identifier: i32 = packet.read();
             match identifier {
-                1 => room_variables_list = Some(packet.read()),
-                2 => furni_variable_info = Some(packet.read()),
-                3 => user_variable_info = Some(packet.read()),
-                4 => global_variable_info = Some(packet.read()),
-                5 => reference_variables_list = Some(packet.read()),
+                0 => room_variables_list = Some(packet.read()),
+                1 => furni_variable_info = Some(packet.read()),
+                2 => user_variable_info = Some(packet.read()),
+                3 => global_variable_info = Some(packet.read()),
+                4 => reference_variables_list = Some(packet.read()),
                 _ => {}
             };
         }
